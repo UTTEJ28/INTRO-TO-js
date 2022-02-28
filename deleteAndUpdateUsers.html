@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChangeUserDetails</title>
+</head>
+
+<body>
+    <div class="container">
+        <div id="main" class="card card-body" style="width: 300px;height: 280px; margin-left: auto;margin-right: auto;">
+            <form onsubmit="saveToLocalStorage(event)">
+                <table>
+                    <tr>
+                        <td>Name</td>
+                    </tr>
+                    <tr>
+                        <td><input type="text" name="username" class="form-control mr-2" required/></td>
+                    </tr>
+                    <tr>
+                        <td>Email</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="email" name="emailId" class="form-control mr-2" required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Contact</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="tel" name="phonenumber" class="form-control mr-2" required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><input id="submit" type="submit" style="width: 205px; padding: 5px;margin-left: 5px;margin-top: 10px;background-color:black;color: white;border-radius: 5px; "></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <ul id='listOfUsers' style="margin-right: auto;margin-left: auto;"></ul>
+    </div>
+    <script>
+        function saveToLocalStorage(event) {
+            event.preventDefault();
+            const name = event.target.username.value;
+            const email = event.target.emailId.value;
+            const phonenumber = event.target.phonenumber.value;
+            const obj = {
+                name,
+                email,
+                phonenumber
+            }
+            localStorage.setItem(obj.email, JSON.stringify(obj))
+            showNewUserOnScreen(obj)
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            const localStorageObj = localStorage;
+            const localstoragekeys = Object.keys(localStorageObj)
+
+            for (var i = 0; i < localstoragekeys.length; i++) {
+                const key = localstoragekeys[i]
+                const userDetailsString = localStorageObj[key];
+                const userDetailsObj = JSON.parse(userDetailsString);
+                showNewUserOnScreen(userDetailsObj)
+            }
+        })
+
+        function showNewUserOnScreen(user) {
+            const parentNode = document.getElementById('listOfUsers');
+            const childHTML = `<li id=${user.email}> ${user.name} - ${user.email}
+                                        <button onclick=deleteUser('${user.email}')> Delete User </button>
+                                        <button onclick=editUser('${user.email}')> Edit User </button>
+                                     </li>`
+
+            parentNode.innerHTML = parentNode.innerHTML + childHTML;
+        }
+
+        function deleteUser(emailId) {
+            console.log(emailId)
+            localStorage.removeItem(emailId);
+            removeUserFromScreen(emailId);
+        }
+
+        function editUser(emailId) {
+            console.log(emailId)
+            localStorage.removeItem(emailId);
+            removeUserFromScreen(emailId);
+        }
+
+        function removeUserFromScreen(emailId) {
+            const parentNode = document.getElementById('listOfUsers');
+            const childNodeIsDeleted = document.getElementById(emailId);
+
+            parentNode.removeChild(childNodeIsDeleted)
+        }
+    </script>
+</body>
+
+</html>
